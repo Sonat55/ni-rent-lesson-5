@@ -1,0 +1,113 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.2.0, pluggy-1.7.0 -- /home/sonat/PP/Narzedzia_informatyki/lab5/ni-rent-lesson-5/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/sonat/PP/Narzedzia_informatyki/lab5/ni-rent-lesson-5
+collecting ... collected 10 items
+
+tests/test_complex_integraion.py::test_apartment_costs_with_optional_parameters PASSED [ 10%]
+tests/test_complex_integraion.py::test_apartment_settlement FAILED       [ 20%]
+tests/test_complex_integraion.py::test_tenant_setlement FAILED           [ 30%]
+tests/test_integration.py::test_load_data PASSED                         [ 40%]
+tests/test_integration.py::test_tenants_in_manager PASSED                [ 50%]
+tests/test_integration.py::test_if_tenants_have_valid_apartment_keys PASSED [ 60%]
+tests/test_unit.py::test_apartment_fields PASSED                         [ 70%]
+tests/test_unit.py::test_apartment_from_dict PASSED                      [ 80%]
+tests/test_unit.py::test_tenant_fields PASSED                            [ 90%]
+tests/test_unit.py::test_tenant_from_dict PASSED                         [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_apartment_settlement ___________________________
+
+    def test_apartment_settlement():
+        manager = Manager(Parameters())
+        manager.bills.append(Bill(
+                apartment='apart-polanka',
+                date_due='2025-03-15',
+                settlement_year=2025,
+                settlement_month=2,
+                amount_pln=1250.0,
+                type='rent'
+            ))
+    
+        manager.bills.append(Bill(
+                apartment='apart-polanka',
+                date_due='2024-03-15',
+                settlement_year=2024,
+                settlement_month=2,
+                amount_pln=1150.0,
+                type='rent'
+            ))
+    
+        manager.bills.append(Bill(
+                apartment='apart-polanka',
+                date_due='2024-02-02',
+                settlement_year=2024,
+                settlement_month=1,
+                amount_pln=222.0,
+                type='electricity'
+            ))
+    
+    
+        settlement = manager.create_apartment_settlement('apart-polanka', 2025, 1)
+        assert settlement is not None
+        assert isinstance(settlement, ApartmentSettlement)
+        assert settlement.apartment == 'apart-polanka'
+        assert settlement.year == 2025
+        assert settlement.month == 1
+        assert settlement.total_bills_pln == 910.0
+    
+    
+        settlement = manager.create_apartment_settlement('apart-polanka', 2025, 2)
+>       assert settlement.total_bills_pln == 999.0
+E       AssertionError: assert 1250.0 == 999.0
+E        +  where 1250.0 = ApartmentSettlement(apartment='apart-polanka', month=2, year=2025, total_rent_pln=0.0, total_bills_pln=1250.0, total_due_pln=-1250.0).total_bills_pln
+
+tests/test_complex_integraion.py:106: AssertionError
+____________________________ test_tenant_setlement _____________________________
+
+    def test_tenant_setlement():
+        manager = Manager(Parameters())
+        manager.bills.append(Bill(
+                    apartment='apart-polanka',
+                    date_due='2025-03-15',
+                    settlement_year=2025,
+                    settlement_month=2,
+                    amount_pln=1250.0,
+                    type='rent'
+                ))
+    
+        manager.bills.append(Bill(
+                    apartment='apart-polanka',
+                    date_due='2024-03-15',
+                    settlement_year=2024,
+                    settlement_month=2,
+                    amount_pln=1150.0,
+                    type='rent'
+                ))
+    
+        manager.bills.append(Bill(
+                    apartment='apart-polanka',
+                    date_due='2024-02-02',
+                    settlement_year=2024,
+                    settlement_month=1,
+                    amount_pln=222.0,
+                    type='electricity'
+                ))
+    
+>       manager.tenants.append(Tenant(
+        ^^^^^^^^^^^^^^^^^^^^^^
+                name = "Jan Nowak",
+                appartment = "apart-polanka",
+                room="room-bigger",
+                rent_pln=1500.0,
+                deposit_pln=3000.0,
+                date_agreement_from='2024-01-01',
+                date_agreement_to='2024-12-31'
+            ))
+E       AttributeError: 'dict' object has no attribute 'append'
+
+tests/test_complex_integraion.py:146: AttributeError
+=========================== short test summary info ============================
+FAILED tests/test_complex_integraion.py::test_apartment_settlement - Assertio...
+FAILED tests/test_complex_integraion.py::test_tenant_setlement - AttributeErr...
+========================= 2 failed, 8 passed in 0.16s ==========================
